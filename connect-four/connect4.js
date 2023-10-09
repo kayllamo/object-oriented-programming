@@ -19,7 +19,7 @@ class Game{
     // make column tops (clickable area for adding a piece to that column)
     const top = document.createElement('tr');
     top.setAttribute('id', 'column-top');
-    top.addEventListener('click', this.handleClick);
+    top.addEventListener('click', this.handleClick.bind(this));
   
     for (let x = 0; x < this.WIDTH; x++) {
       const headCell = document.createElement('td');
@@ -63,20 +63,18 @@ class Game{
     alert(msg);
   }
   handleClick(evt){
-
   const x = +evt.target.id;
-  // NOT FINDING THE FUNCTION - UNDEFINED -- 
-  console.log(x)
-  const y = findSpotForCol(x);
+
+  const y = this.findSpotForCol(x);
   if (y === null) {
     return;
   }
 
   this.board[y][x] = this.currPlayer;
-  placeInTable(y, x);
+  this.placeInTable(y, x);
   
   // check for win
-  if (checkForWin()) {
+  if (this.checkForWin()) {
     return endGame(`Player ${this.currPlayer} won!`);
   }
   
@@ -86,14 +84,13 @@ class Game{
   }
     
   // switch players
-  this.currPlayer = currPlayer === 1 ? 2 : 1;
+  this.currPlayer = this.currPlayer === 1 ? 2 : 1;
   }
   checkForWin(){
-    function _win(cells) {
+     let _win = (cells) => {
       // Check four cells to see if they're all color of current player
       //  - cells: list of four (y, x) cells
       //  - returns true if all are legal coordinates & all match currPlayer
-  
       return cells.every(
         ([y, x]) =>
           y >= 0 &&
